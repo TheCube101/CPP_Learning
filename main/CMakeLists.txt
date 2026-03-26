@@ -4,5 +4,5 @@ project(main)
 set(CMAKE_CXX_STANDARD 20)
 
 # add_executable(main Loops.cpp)
-add_executable(main pi_calculator.cpp
-        tick_tack_toe.cpp)
+# add_executable(main pi_calculator.cpp
+add_executable(main tic_tac_toe.cpp)
