@@ -1,6 +1,4 @@
 #include <iostream>
-#include <cmath>
-#include <unordered_map>
 
 using namespace std;
 
@@ -29,6 +27,68 @@ void print_board(string board[3][3]) {
 
 }
 
+// const string& player_turn ------ use the original string - don't copy - don't allow changes inside function
+bool win_detector(string board[3][3], const string& player_turn) {
+    int squares_occupied = 0;
+    bool won_handler = false;
+
+    // check all rows
+    squares_occupied = 0;
+    for (int i = 0; i < 3; i++) {
+        squares_occupied = 0;
+
+        for (int j = 0; j < 3; j++) {
+            if (board[j][i] == player_turn) {
+                squares_occupied += 1;
+            }
+        }
+    }
+    if (squares_occupied == 3) {
+        won_handler = true;
+    }
+
+    // check columns
+    squares_occupied = 0;
+    for (int i = 0; i < 3; i++) {
+        squares_occupied = 0;
+
+        for (int j = 0; j < 3; j++) {
+            if (board[i][j] == player_turn) {
+                squares_occupied += 1;
+            }
+        }
+    }
+    if (squares_occupied == 3) {
+        won_handler = true;
+    }
+
+    // check diagonals
+    squares_occupied = 0;
+    for (int i = 0; i < 3; i++) {
+        // add one square to the occupied int if the square is occupied by player turn
+        if (board[i][i] == player_turn) {
+            squares_occupied += 1;
+        }
+    }
+    if (squares_occupied == 3) {
+        won_handler = true;
+    }
+
+    // check diagonals
+    squares_occupied = 0;
+    for (int i = 0; i < 3; i++) {
+        // add one square to the occupied int if the square is occupied by player turn
+        if (board[3-i-1][i] == player_turn) {
+            squares_occupied += 1;
+        }
+    }
+    if (squares_occupied == 3) {
+        won_handler = true;
+    }
+
+    return won_handler;
+}
+
 int main() {
     string board[3][3] = {
         {" ", " ", " "},
@@ -38,7 +98,6 @@ int main() {
 
     bool player_won = false;
     string player_turn = "X";
-    int turn_count = 0;
 
     while (player_won == false) {
         bool player_input = false;
@@ -48,11 +107,8 @@ int main() {
             int row;
             int column;
 
-            cout << turn_count;
-
-            if (turn_count == 4) {  //
-                player_won = true;  // simple game stopper after 4 moves
-            }                       //
+            print_board(board); // prints board
+            cout << "Player " << player_turn << " to move" << endl;
 
             cout << endl << "Please enter row: ";
             cin >> row;
@@ -77,15 +133,28 @@ int main() {
             // checks if the row/column is in the correct number range
             if (row >= 1 && row <= 3) {
                 if (column >= 1 && column <= 3) {
-                    board[row-1][column-1] = player_turn;
-                    if (player_turn == "X") {
-                        player_turn = "O";
+                    // If cell already contains an X or O it will not be valid
+                    if (board[row-1][column-1] == "X" || board[row-1][column-1] == "O") {
+                        cout << "Invalid move! Choose another cell" << endl;
+                        player_input = false;
                     } else {
-                        player_turn = "X";
+                        board[row-1][column-1] = player_turn;
+                        player_input = true;
+
+                        if (win_detector(board, player_turn)) {
+                            player_won = true;
+                            print_board(board);
+                            cout << "Player " << player_turn << " won!" << endl;
+                            break;
+                        }
+
+                        // switch turn
+                        if (player_turn == "X") {
+                            player_turn = "O";
+                        } else {
+                            player_turn = "X";
+                        }
                     }
-                    turn_count += 1;
-                    print_board(board);
-                    player_input = true;
                 } else {
                     column = 0;
                     cout << "Invalid column! Please use 1-3" << endl;
@@ -96,8 +165,5 @@ int main() {
             }
         }
     }
-
-    //print_board(board);
-
     return 0;
 }
