@@ -15,16 +15,15 @@ int main() {
     constexpr  int windowHeight = 800;
 
     // tick interval
-    constexpr  float interval = 0.5f;
-
-    // Each snake part/cell has a fixed width and height
-    constexpr  int cellSize = 10;
-    constexpr  int cellWidth = windowWidth/cellSize;
-    constexpr  int cellHeight = windowHeight/cellSize;
+    constexpr  float interval = 0.25f;
 
     // starting direction
     char currentDirection = 'R';
-    char newDirection = ' ';
+    char newDirection = currentDirection;
+
+    // Segment max size
+    constexpr  int maxSize = 15.f;
+    RectangleShape segmentSquare(Vector2f(maxSize, maxSize));
 
     // setup body
     vector<snakePos> snakeBody;
@@ -39,9 +38,10 @@ int main() {
     }
 
     // test struct print
-    //for (const auto& segment : snakeBody) {
-    //    std::cout << "(" << segment.xPos << ", " << segment.yPos << ")\n";
-    //}
+    for (const auto& segment : snakeBody) {
+        cout << "(" << segment.xPos << ", " << segment.yPos << ")\n";
+    }
+    cout << endl;
 
     // keyboard map
     static const unordered_map<Keyboard::Scancode, char> keyNames = {
@@ -49,6 +49,14 @@ int main() {
         {Keyboard::Scancode::S, 'D'},
         {Keyboard::Scancode::A, 'L'},
         {Keyboard::Scancode::D, 'R'},
+    };
+
+    // movement map
+    static const unordered_map<char, tuple<int, int>> moveMap = {
+        {'U', {0, -1}},
+        {'D', {0, 1}},
+        {'L', {-1, 0}},
+        {'R', {1, 0}},
     };
 
     // render the window
@@ -70,6 +78,7 @@ int main() {
             if (const auto* keyboardEvent = event->getIf<Event::KeyPressed>()) {
                 auto key = keyNames.find(keyboardEvent->scancode);
 
+                ////// remember to check for oposite movement
                 if (key != keyNames.end()) {
                     if (key->second != currentDirection) {
                         newDirection = key->second;
@@ -86,16 +95,40 @@ int main() {
         // Clock system. If the clock is equal to the interval the do stuff - ending by resetting the clock
         if (clock.getElapsedTime().asSeconds() >= interval)
         {
-            // do stuff here to move snake:
+            currentDirection = newDirection; // update direction
 
-            currentDirection = newDirection;
+            // do stuff here to move snake:
+            // move the head and the rest of the body
+            snakePos snakeHead = snakeBody[0];
+            snakeBody[0].xPos += get<0>(moveMap.find(currentDirection)->second);
+            snakeBody[0].yPos += get<1>(moveMap.find(currentDirection)->second);
+
+            for (int i = 1; i < snakeBody.size(); i++) {
+                snakePos temp = snakeBody[i];
+                snakeBody[i] = snakeHead;
+                snakeHead = temp;
+            }
+
+
             clock.restart(); // Reset the clock for the next interval
         }
         // clear the window with black color
         window.clear(Color::Black);
 
         // draw everything here...
-        // window.draw(...);
+        // draw snake
+        // for each element in snakeBody -> get rectangle coordinates for display -> draw on those coordinates
+        for (int i = 0; i < snakeBody.size(); i++) {
+            float drawXPos = snakeBody[i].xPos * maxSize;
+            float drawYPos = snakeBody[i].yPos * maxSize;
+
+            cout << "X-pos: " << drawXPos << "Y-pos: " << drawYPos << endl;
+
+            segmentSquare.setPosition(Vector2f(drawXPos, drawYPos));
+            segmentSquare.setFillColor(Color::White);
+
+            window.draw(segmentSquare);
+        }
 
         // end the current frame
         window.display();
