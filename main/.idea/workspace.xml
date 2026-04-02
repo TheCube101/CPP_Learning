@@ -28,7 +28,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="923be0bc-7961-4639-a38c-4ee405a1c13e" name="Changes" comment="Learned how to interact with SFML.&#10;Started on simple snake game. Learned how structs work.&#10;Basic movement set up for snake">
+    <list default="true" id="923be0bc-7961-4639-a38c-4ee405a1c13e" name="Changes" comment="Added snake movement + graphics to snake game.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/snake_game.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/snake_game.cpp" afterDir="false" />
     </list>
@@ -63,6 +63,10 @@
     &quot;accountId&quot;: &quot;2eae6553-f284-47ec-a187-5acdeae6d28e&quot;
   }
 }</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+  </component>
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
     <option name="majorVersion" value="2025" />
@@ -136,7 +140,8 @@
       <workItem from="1774875828429" duration="7082000" />
       <workItem from="1774890125875" duration="7686000" />
       <workItem from="1774985984971" duration="216000" />
-      <workItem from="1775080849905" duration="3421000" />
+      <workItem from="1775080849905" duration="3551000" />
+      <workItem from="1775128156921" duration="11562000" />
     </task>
     <task id="LOCAL-00001" summary="Learned how to interact with SFML.&#10;Started on simple snake game. Learned how structs work.&#10;Basic movement set up for snake">
       <option name="closed" value="true" />
@@ -146,7 +151,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774902478463</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Added snake movement + graphics to snake game.">
+      <option name="closed" value="true" />
+      <created>1775084419075</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1775084419075</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -170,7 +183,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Learned how to interact with SFML.&#10;Started on simple snake game. Learned how structs work.&#10;Basic movement set up for snake" />
-    <option name="LAST_COMMIT_MESSAGE" value="Learned how to interact with SFML.&#10;Started on simple snake game. Learned how structs work.&#10;Basic movement set up for snake" />
+    <MESSAGE value="Added snake movement + graphics to snake game." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added snake movement + graphics to snake game." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

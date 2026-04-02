@@ -1,10 +1,16 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <random>
 
 using namespace std;
 using namespace sf;
 
 struct snakePos {
+    int xPos;
+    int yPos;
+};
+
+struct applePos {
     int xPos;
     int yPos;
 };
@@ -15,14 +21,14 @@ int main() {
     constexpr  int windowHeight = 800;
 
     // tick interval
-    constexpr  float interval = 0.25f;
+    constexpr  float interval = 0.10f;
 
     // starting direction
-    char currentDirection = 'R';
+    char currentDirection = 'D';
     char newDirection = currentDirection;
 
     // Segment max size
-    constexpr  int maxSize = 15.f;
+    constexpr  int maxSize = 40.f;
     RectangleShape segmentSquare(Vector2f(maxSize, maxSize));
 
     // setup body
@@ -42,6 +48,21 @@ int main() {
         cout << "(" << segment.xPos << ", " << segment.yPos << ")\n";
     }
     cout << endl;
+
+    // apple setup
+    RectangleShape apple(Vector2f(maxSize, maxSize));
+    apple.setFillColor(Color::Red);
+
+    vector<applePos> appleObject;
+
+    // setup random "engine"
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> randomNumber(1, windowHeight/maxSize);
+
+    // give apple random pos
+    appleObject.push_back({(randomNumber(gen)-1) * maxSize,(randomNumber(gen)-1) * maxSize});
+    cout << appleObject[0].xPos << " " << appleObject[0].yPos << endl;
 
     // keyboard map
     static const unordered_map<Keyboard::Scancode, char> keyNames = {
@@ -78,10 +99,23 @@ int main() {
             if (const auto* keyboardEvent = event->getIf<Event::KeyPressed>()) {
                 auto key = keyNames.find(keyboardEvent->scancode);
 
-                ////// remember to check for oposite movement
                 if (key != keyNames.end()) {
                     if (key->second != currentDirection) {
-                        newDirection = key->second;
+                        bool isXValid = false;
+                        bool isYValid = false;
+
+                        // opposite movement check and validation
+                        // the current direction "reversed" is not the same as the new direction then isXValid and isYValid is true
+                        if (get<0>(moveMap.find(currentDirection)->second) * (-1) != get<0>(moveMap.find(key->second)->second)) {
+                            isXValid = true;
+                        }
+                        if (get<1>(moveMap.find(currentDirection)->second) * (-1) != get<1>(moveMap.find(key->second)->second)) {
+                            isYValid = true;
+                        }
+                        if (isXValid && isYValid) {
+                            newDirection = key->second;
+                        }
+
                         cout << "Key pressed: " << key->second << endl;
                     } else {
                         cout << "Invalid direction" << endl;
@@ -109,7 +143,23 @@ int main() {
                 snakeHead = temp;
             }
 
+            // add a temp segment every time the snake moves
+            // 400 is temp apple coordinate "set apple random coordinate via variable x and y"
 
+
+            if (snakeBody[0].xPos == appleObject[0].xPos/maxSize && snakeBody[0].yPos == appleObject[0].yPos/maxSize) {
+                // new segment must be the coordinates of the segment furthest back in the list but must not update its coordinate to sit inside the old furthest element
+                snakeBody.push_back({
+                    snakeBody[snakeBody.size()-1].xPos,
+                    snakeBody[snakeBody.size()-1].yPos
+                });
+
+                // new apple position if apple was intersected
+                appleObject[0].xPos = (randomNumber(gen)-1) * maxSize;
+                appleObject[0].yPos = (randomNumber(gen)-1) * maxSize;
+
+                cout << appleObject[0].xPos << " " << appleObject[0].yPos << endl;
+            }
             clock.restart(); // Reset the clock for the next interval
         }
         // clear the window with black color
@@ -122,13 +172,14 @@ int main() {
             float drawXPos = snakeBody[i].xPos * maxSize;
             float drawYPos = snakeBody[i].yPos * maxSize;
 
-            cout << "X-pos: " << drawXPos << "Y-pos: " << drawYPos << endl;
-
             segmentSquare.setPosition(Vector2f(drawXPos, drawYPos));
             segmentSquare.setFillColor(Color::White);
 
             window.draw(segmentSquare);
         }
+
+        apple.setPosition(Vector2f(appleObject[0].xPos, appleObject[0].yPos));
+        window.draw(apple);
 
         // end the current frame
         window.display();
