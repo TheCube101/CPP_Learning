@@ -28,7 +28,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="923be0bc-7961-4639-a38c-4ee405a1c13e" name="Changes" comment="Added snake movement + graphics to snake game.">
+    <list default="true" id="923be0bc-7961-4639-a38c-4ee405a1c13e" name="Changes" comment="Added apples and direction handling - randomized apple spawning.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/snake_game.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/snake_game.cpp" afterDir="false" />
     </list>
@@ -141,7 +141,10 @@
       <workItem from="1774890125875" duration="7686000" />
       <workItem from="1774985984971" duration="216000" />
       <workItem from="1775080849905" duration="3551000" />
-      <workItem from="1775128156921" duration="11562000" />
+      <workItem from="1775128156921" duration="11675000" />
+      <workItem from="1775165990010" duration="2831000" />
+      <workItem from="1775239446973" duration="1153000" />
+      <workItem from="1775252262686" duration="3044000" />
     </task>
     <task id="LOCAL-00001" summary="Learned how to interact with SFML.&#10;Started on simple snake game. Learned how structs work.&#10;Basic movement set up for snake">
       <option name="closed" value="true" />
@@ -159,7 +162,15 @@
       <option name="project" value="LOCAL" />
       <updated>1775084419075</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Added apples and direction handling - randomized apple spawning.">
+      <option name="closed" value="true" />
+      <created>1775155681600</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1775155681600</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -184,7 +195,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Learned how to interact with SFML.&#10;Started on simple snake game. Learned how structs work.&#10;Basic movement set up for snake" />
     <MESSAGE value="Added snake movement + graphics to snake game." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added snake movement + graphics to snake game." />
+    <MESSAGE value="Added apples and direction handling - randomized apple spawning." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added apples and direction handling - randomized apple spawning." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

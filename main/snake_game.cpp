@@ -21,24 +21,24 @@ int main() {
     constexpr  int windowHeight = 800;
 
     // tick interval
-    constexpr  float interval = 0.10f;
+    constexpr  float interval = 0.20f;
 
     // starting direction
     char currentDirection = 'D';
     char newDirection = currentDirection;
 
     // Segment max size
-    constexpr  int maxSize = 40.f;
+    constexpr  int maxSize = 100.f;
     RectangleShape segmentSquare(Vector2f(maxSize, maxSize));
 
     // setup body
     vector<snakePos> snakeBody;
 
     // starting pos for head
-    snakeBody.push_back({10,10});
+    snakeBody.push_back({0,0});
 
     // create rest of snake body from head
-    constexpr int length = 3;
+    constexpr int length = 63;
     for (int segment = 0; segment < length-1; segment++) {
         snakeBody.push_back({snakeBody[segment].xPos-1, snakeBody[segment].yPos});
     }
@@ -64,6 +64,12 @@ int main() {
     appleObject.push_back({(randomNumber(gen)-1) * maxSize,(randomNumber(gen)-1) * maxSize});
     cout << appleObject[0].xPos << " " << appleObject[0].yPos << endl;
 
+    // score
+    int score = 0;
+
+    // max body size
+    constexpr int maxBodySize = (windowWidth/maxSize) * (windowHeight/maxSize);
+
     // keyboard map
     static const unordered_map<Keyboard::Scancode, char> keyNames = {
         {Keyboard::Scancode::W, 'U'},
@@ -82,6 +88,18 @@ int main() {
 
     // render the window
     RenderWindow window(VideoMode({windowWidth, windowHeight}), "Snake Game");
+
+    // custom font
+    Font font("C:/CPP-projekct/Fonts/JetBrainsMonoNerdFontMono-Regular.ttf");
+
+    Text text(font);
+    text.setCharacterSize(70);
+    text.setFillColor(Color(0xb3d0ffff));
+    text.setStyle(Text::Bold);
+    text.setPosition(Vector2f(windowWidth / 2.0f, windowHeight / 10.f));
+
+    // setup game state
+    string gameState = "Playing";
 
     // setup initial clock object
     Clock clock;
@@ -126,61 +144,109 @@ int main() {
             }
         }
 
-        // Clock system. If the clock is equal to the interval the do stuff - ending by resetting the clock
-        if (clock.getElapsedTime().asSeconds() >= interval)
-        {
-            currentDirection = newDirection; // update direction
+        // Handle game state
+        if (gameState == "Playing") {
+            // Clock system. If the clock is equal to the interval the do stuff - ending by resetting the clock
+            if (clock.getElapsedTime().asSeconds() >= interval)
+            {
+                currentDirection = newDirection; // update direction
 
-            // do stuff here to move snake:
-            // move the head and the rest of the body
-            snakePos snakeHead = snakeBody[0];
-            snakeBody[0].xPos += get<0>(moveMap.find(currentDirection)->second);
-            snakeBody[0].yPos += get<1>(moveMap.find(currentDirection)->second);
+                // do stuff here to move snake:
+                // move the head and the rest of the body
+                snakePos snakeHead = snakeBody[0];
+                snakeBody[0].xPos += get<0>(moveMap.find(currentDirection)->second);
+                snakeBody[0].yPos += get<1>(moveMap.find(currentDirection)->second);
 
-            for (int i = 1; i < snakeBody.size(); i++) {
-                snakePos temp = snakeBody[i];
-                snakeBody[i] = snakeHead;
-                snakeHead = temp;
+                for (int i = 1; i < snakeBody.size(); i++) {
+                    snakePos temp = snakeBody[i];
+                    snakeBody[i] = snakeHead;
+                    snakeHead = temp;
+                }
+
+                // add a temp segment every time the snake moves
+                // 400 is temp apple coordinate "set apple random coordinate via variable x and y"
+
+
+                if (snakeBody[0].xPos == appleObject[0].xPos/maxSize && snakeBody[0].yPos == appleObject[0].yPos/maxSize) {
+                    // new segment must be the coordinates of the segment furthest back in the list
+                    snakeBody.push_back({
+                        snakeBody[snakeBody.size()-1].xPos,
+                        snakeBody[snakeBody.size()-1].yPos
+                    });
+
+                    // if the snake is at its max size then the game ends
+                    if (snakeBody.size() >= maxBodySize) {
+                        gameState = "Won";
+                    } else {
+                        // new apple position if apple was intersected
+                        bool isPosValid = false;
+
+                        // validate new apple pos and try again if not valid
+                        while (isPosValid == false) {
+                            int appleXPos = (randomNumber(gen)-1) * maxSize;
+                            int appleYPos = (randomNumber(gen)-1) * maxSize;
+
+                            bool appleValidPos = true;
+
+                            for (int i = 0; i < snakeBody.size(); i++) {
+                                if (appleXPos/maxSize == snakeBody[i].xPos && appleYPos/maxSize == snakeBody[i].yPos) {
+                                    appleValidPos = false;
+                                }
+                            }
+                            if (appleValidPos) {
+                                appleObject[0].xPos = appleXPos;
+                                appleObject[0].yPos = appleYPos;
+                                isPosValid = true;
+                            }
+                        }
+                    }
+
+                    cout << appleObject[0].xPos << " " << appleObject[0].yPos << endl;
+
+                    score += 1;
+                }
+                clock.restart(); // Reset the clock for the next interval
+            }
+            // clear the window with black color
+            window.clear(Color::Black);
+
+            // draw everything here...
+            // draw snake
+            // for each element in snakeBody -> get rectangle coordinates for display -> draw on those coordinates
+            for (int i = 0; i < snakeBody.size(); i++) {
+                float drawXPos = snakeBody[i].xPos * maxSize;
+                float drawYPos = snakeBody[i].yPos * maxSize;
+
+                segmentSquare.setPosition(Vector2f(drawXPos, drawYPos));
+                segmentSquare.setFillColor(Color::White);
+
+                window.draw(segmentSquare);
             }
 
-            // add a temp segment every time the snake moves
-            // 400 is temp apple coordinate "set apple random coordinate via variable x and y"
+            text.setString(to_string(score));
 
-
-            if (snakeBody[0].xPos == appleObject[0].xPos/maxSize && snakeBody[0].yPos == appleObject[0].yPos/maxSize) {
-                // new segment must be the coordinates of the segment furthest back in the list but must not update its coordinate to sit inside the old furthest element
-                snakeBody.push_back({
-                    snakeBody[snakeBody.size()-1].xPos,
-                    snakeBody[snakeBody.size()-1].yPos
-                });
-
-                // new apple position if apple was intersected
-                appleObject[0].xPos = (randomNumber(gen)-1) * maxSize;
-                appleObject[0].yPos = (randomNumber(gen)-1) * maxSize;
-
-                cout << appleObject[0].xPos << " " << appleObject[0].yPos << endl;
-            }
-            clock.restart(); // Reset the clock for the next interval
+            apple.setPosition(Vector2f(appleObject[0].xPos, appleObject[0].yPos));
+            window.draw(apple);
+            window.draw(text);
         }
-        // clear the window with black color
-        window.clear(Color::Black);
+        if (gameState == "Won") {
+            cout << gameState << endl;
+            // clear the window with black color
+            window.clear(Color::Black);
 
-        // draw everything here...
-        // draw snake
-        // for each element in snakeBody -> get rectangle coordinates for display -> draw on those coordinates
-        for (int i = 0; i < snakeBody.size(); i++) {
-            float drawXPos = snakeBody[i].xPos * maxSize;
-            float drawYPos = snakeBody[i].yPos * maxSize;
+            // do won screen
+            // text, and button
 
-            segmentSquare.setPosition(Vector2f(drawXPos, drawYPos));
-            segmentSquare.setFillColor(Color::White);
-
-            window.draw(segmentSquare);
         }
+        if (gameState == "Game Over") {
+            cout << gameState << endl;
+            // clear the window with black color
+            window.clear(Color::Black);
 
-        apple.setPosition(Vector2f(appleObject[0].xPos, appleObject[0].yPos));
-        window.draw(apple);
+            // do game over screen
+            // text, and button
 
+        }
         // end the current frame
         window.display();
     }
