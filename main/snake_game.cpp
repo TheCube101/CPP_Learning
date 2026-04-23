@@ -38,7 +38,7 @@ int main() {
     snakeBody.push_back({0,0});
 
     // create rest of snake body from head
-    constexpr int length = 63;
+    constexpr int length = 10;
     for (int segment = 0; segment < length-1; segment++) {
         snakeBody.push_back({snakeBody[segment].xPos-1, snakeBody[segment].yPos});
     }
@@ -149,6 +149,7 @@ int main() {
             // Clock system. If the clock is equal to the interval the do stuff - ending by resetting the clock
             if (clock.getElapsedTime().asSeconds() >= interval)
             {
+
                 currentDirection = newDirection; // update direction
 
                 // do stuff here to move snake:
@@ -157,6 +158,24 @@ int main() {
                 snakeBody[0].xPos += get<0>(moveMap.find(currentDirection)->second);
                 snakeBody[0].yPos += get<1>(moveMap.find(currentDirection)->second);
 
+                cout << snakeHead.yPos << windowWidth/maxSize << endl;
+
+                // detect snake collision
+                for (int i = 1; i < snakeBody.size(); i++) {
+                    if (snakeHead.xPos == snakeBody[i].xPos && snakeHead.yPos == snakeBody[i].yPos) {
+                        gameState = "Game Over";
+                    }
+
+                    if (snakeHead.xPos >= windowWidth/maxSize || snakeHead.xPos < (0)) {
+                        gameState = "Game Over";
+                    }
+
+                    if (snakeHead.yPos >= windowHeight/maxSize || snakeHead.yPos < (0)) {
+                        gameState = "Game Over";
+                    }
+                }
+
+                // move the head and the rest of the body
                 for (int i = 1; i < snakeBody.size(); i++) {
                     snakePos temp = snakeBody[i];
                     snakeBody[i] = snakeHead;
@@ -164,9 +183,7 @@ int main() {
                 }
 
                 // add a temp segment every time the snake moves
-                // 400 is temp apple coordinate "set apple random coordinate via variable x and y"
-
-
+                // "set apple random coordinate via variable x and y"
                 if (snakeBody[0].xPos == appleObject[0].xPos/maxSize && snakeBody[0].yPos == appleObject[0].yPos/maxSize) {
                     // new segment must be the coordinates of the segment furthest back in the list
                     snakeBody.push_back({
@@ -205,6 +222,7 @@ int main() {
 
                     score += 1;
                 }
+
                 clock.restart(); // Reset the clock for the next interval
             }
             // clear the window with black color
@@ -229,6 +247,7 @@ int main() {
             window.draw(apple);
             window.draw(text);
         }
+
         if (gameState == "Won") {
             cout << gameState << endl;
             // clear the window with black color
@@ -238,8 +257,9 @@ int main() {
             // text, and button
 
         }
+
         if (gameState == "Game Over") {
-            cout << gameState << endl;
+            //cout << gameState << endl;
             // clear the window with black color
             window.clear(Color::Black);
 
